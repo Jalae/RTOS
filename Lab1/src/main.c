@@ -40,7 +40,7 @@
     FreeRTOS WEB site.
 
     1 tab == 4 spaces!
-    
+
  ***************************************************************************
  *                                                                       *
  *    Having a problem?  Start by reading the FAQ "My application does   *
@@ -50,33 +50,22 @@
  *                                                                       *
  ***************************************************************************
 
-    
-    http://www.FreeRTOS.org - Documentation, training, latest information, 
+
+    http://www.FreeRTOS.org - Documentation, training, latest information,
     license and contact details.
-    
+
     http://www.FreeRTOS.org/plus - A selection of FreeRTOS ecosystem products,
     including FreeRTOS+Trace - an indispensable productivity tool.
 
-    Real Time Engineers ltd license FreeRTOS to High Integrity Systems, who sell 
-    the code with commercial support, indemnification, and middleware, under 
+    Real Time Engineers ltd license FreeRTOS to High Integrity Systems, who sell
+    the code with commercial support, indemnification, and middleware, under
     the OpenRTOS brand: http://www.OpenRTOS.com.  High Integrity Systems also
-    provide a safety engineered and independently SIL3 certified version under 
+    provide a safety engineered and independently SIL3 certified version under
     the SafeRTOS brand: http://www.SafeRTOS.com.
- */
+*/
 
-
-
-/* Hardware include. */
-#include <xc.h>
-
-/* Standard includes. */
-#include <stdint.h>
-#include <plib.h>
-
-/* FreeRTOS includes. */
-#include <FreeRTOS.h>
-#include "task.h"
-#include "queue.h"
+/* My Includes */
+#include "myled.h"
 
 
 /* Hardware configuration. */
@@ -86,40 +75,19 @@
 
 /* Time is measured in "ticks".  The tick rate is set by the configTICK_RATE_HZ
 configuration parameter (defined in FreeRTOSConfig.h).  If configTICK_RATE_HZ
-is equal to or less than 1000 (1KHz) then portTICK_RATE_MS can be used to 
+is equal to or less than 1000 (1KHz) then portTICK_RATE_MS can be used to
 convert a time in milliseconds into a time in ticks. */
 #define mainTOGGLE_PERIOD ( 200UL / portTICK_RATE_MS )
 
-/*-----------------------------------------------------------*/
-/* Functions used by this demo.                              */
-/*-----------------------------------------------------------*/
-/* A task that toggles an LED at a fixed frequency.  This time, the LED to
-toggle and the rate at which the LED is toggled are passed into the task
-using the task parameter.  This allows the same task function to be used to
-create multiple tasks that each behave slightly differently. */
-static void taskToggleAnLED(void *pvParameters);
 
 /* Performs the hardware initialisation to ready the hardware to run this example */
 static void prvSetupHardware(void);
 
-/*-----------------------------------------------------------*/
-/* Structures used by this demo.                             */
-/*-----------------------------------------------------------*/
-/* The structure that is passed into tasks that use the prvToggleAnLED() task function.
- The structure lets the task know which LED to toggle, and at which rate. */
-typedef struct xTASK_PARAMETER {
-    uint16_t usLEDNumber;                   /* The number of the LED to toggle. */
-    portTickType xToggleRate;               /* The rate at which the LED should be toggle. */
-} xTaskParameter_t;
 
 /*-----------------------------------------------------------*/
 /* Variables used by this demo.                              */
 /*-----------------------------------------------------------*/
-/* Create an xTaskParameters_t structure for each of the two tasks that are 
-created using the prvToggleAnLED() task function. */
-static const xTaskParameter_t xTask0Parameters = {0 /* Toggle LED1 */, (800 / portTICK_RATE_MS) /* At 800ms. */};
-static const xTaskParameter_t xTask1Parameters = {1 /* Toggle LED2 */, (400 / portTICK_RATE_MS) /* At 400ms. */};
-static const xTaskParameter_t xTask2Parameters = {2 /* Toggle LED3 */, (150 / portTICK_RATE_MS) /* At 150ms. */};
+static const xTaskParameter_t xTask0Parameters = {3 /* function */, (400 / portTICK_RATE_MS) /* At 800ms. */};
 
 /*-----------------------------------------------------------*/
 int main(void)
@@ -127,55 +95,15 @@ int main(void)
     /* Perform any hardware initialisation that may be necessary. */
     prvSetupHardware();
 
-    xTaskCreate(taskToggleAnLED,
-            "LED1",
+    xTaskCreate(taskTECHNOPARTY,
+            "TECHNO",
             configMINIMAL_STACK_SIZE,
             (void *) &xTask0Parameters,
             1,
             NULL);
 
-    xTaskCreate(taskToggleAnLED,
-            "LED2",
-            configMINIMAL_STACK_SIZE,
-            (void *) &xTask1Parameters,
-            1,
-            NULL);
-
-    xTaskCreate(taskToggleAnLED,
-            "LED3",
-            configMINIMAL_STACK_SIZE,
-            (void *) &xTask2Parameters,
-            1,
-            NULL);
-
-
     /* Start the scheduler so the tasks start executing.  This function should not return. */
     vTaskStartScheduler();
-}
-
-/*-----------------------------------------------------------*/
-static void taskToggleAnLED(void *pvParameters)
-{
-    xTaskParameter_t *pxTaskParameter;
-    portTickType xStartTime;
-
-    /* The parameter points to an xTaskParameters_t structure. */
-    pxTaskParameter = (xTaskParameter_t *) pvParameters;
-
-    while (1)
-    {
-        /* Note the time before entering the while loop.  xTaskGetTickCount()
-        is a FreeRTOS API function. */
-        xStartTime = xTaskGetTickCount();
-
-        /* Loop until pxTaskParameters->xToggleRate ticks have */
-        while ((xTaskGetTickCount() - xStartTime) < pxTaskParameter->xToggleRate);
-
-        
-		
-        /* This task toggles the LED specified in its task parameter. */
-        mPORTDToggleBits(1 << pxTaskParameter->usLEDNumber);
-    }
 }
 
 /*-----------------------------------------------------------*/
