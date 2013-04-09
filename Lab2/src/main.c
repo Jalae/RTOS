@@ -65,7 +65,7 @@
 */
 
 /* My Includes */
-#include "myled.h"
+#include "myincludes.h"
 
 
 /* Hardware configuration. */
@@ -95,8 +95,8 @@ int main(void)
     /* Perform any hardware initialisation that may be necessary. */
     prvSetupHardware();
 
-    xTaskCreate(taskTECHNOPARTY,
-            "TECHNO",
+    xTaskCreate(myledblink,
+            "Blink",
             configMINIMAL_STACK_SIZE,
             (void *) &xTask0Parameters,
             1,
