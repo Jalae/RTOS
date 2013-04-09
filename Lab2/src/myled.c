@@ -4,7 +4,6 @@
 void myledblink(void *pvParameters)
 {
     xTaskParameter_t *pxTaskParameter;
-    portTickType delayfor;
     pxTaskParameter = (xTaskParameter_t *) pvParameters;
     while(1)
     {
