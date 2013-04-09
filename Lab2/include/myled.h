@@ -22,6 +22,7 @@ using the task parameter.  This allows the same task function to be used to
 create multiple tasks that each behave slightly differently. */
 extern void taskTECHNOPARTY(void *pvParameters);
 
+extern void myledblink(void *pvParameters)
 /*-----------------------------------------------------------*/
 /* Structures used by this demo.                             */
 /*-----------------------------------------------------------*/
