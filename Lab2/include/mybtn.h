@@ -1,7 +1,7 @@
 #ifndef SYSTEMCONTROLDEF
 #define SYSTEMCONTROLDEF
 
-#include "myinclude.h"
+#include "myincludes.h"
 
 extern int mybtngetstatus(int btn);
 
