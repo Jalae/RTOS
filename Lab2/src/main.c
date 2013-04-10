@@ -83,22 +83,14 @@ convert a time in milliseconds into a time in ticks. */
 /* Performs the hardware initialisation to ready the hardware to run this example */
 static void prvSetupHardware(void);
 
-
-/*-----------------------------------------------------------*/
-/* Variables used by this demo.                              */
-/*-----------------------------------------------------------*/
-static const xTaskParameter_t xTask0Parameters = {3 /* function */, (400 / portTICK_RATE_MS) /* At 800ms. */};
-
-/*-----------------------------------------------------------*/
-int main(void)
-{
+int main(void) {
     /* Perform any hardware initialisation that may be necessary. */
     prvSetupHardware();
 
-    xTaskCreate(myledblink,
-            "Blink",
+    xTaskCreate(systemControlTask,
+            "MCP",
             configMINIMAL_STACK_SIZE,
-            (void *) &xTask0Parameters,
+            NULL,
             1,
             NULL);
 
@@ -107,8 +99,7 @@ int main(void)
 }
 
 /*-----------------------------------------------------------*/
-static void prvSetupHardware(void)
-{
+static void prvSetupHardware(void) {
     /* Setup the CPU clocks, and configure the interrupt controller. */
     SYSTEMConfigPerformance(configCPU_CLOCK_HZ);
     mOSCSetPBDIV(OSC_PB_DIV_2);
@@ -119,5 +110,7 @@ static void prvSetupHardware(void)
 
     /* LEDs are outputs. */
     mPORTDSetPinsDigitalOut(BIT_0 | BIT_1 | BIT_2);
+
+    ConfigCNPullups(CN15_PULLUP_ENABLE | CN16_PULLUP_ENABLE | CN19_PULLUP_ENABLE);
 }
 
