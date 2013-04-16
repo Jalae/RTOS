@@ -13,6 +13,8 @@ static const xTaskParameter_t params[MAXTASKS] = {
                                             };
 void systemControlTask(void *pvParameters)
 {
+    xTaskParameter_t *pxTaskParameter;
+    pxTaskParameter = (xTaskParameter_t *) pvParameters;
     started = 1;
     while(1)
     {
@@ -20,7 +22,6 @@ void systemControlTask(void *pvParameters)
         {
             if(numTasks < MAXTASKS)
             {
-                
                 xTaskCreate(myledblink,
                         "Blink",
                         configMINIMAL_STACK_SIZE,

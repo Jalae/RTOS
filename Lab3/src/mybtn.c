@@ -1,4 +1,3 @@
-
 #include "mybtn.h"
 static const int buttonport[3] = {6,7,13};
 static int old[3];
@@ -16,5 +15,4 @@ int mybtngetstatus(int btn)
     val1 = PORTD;
     old[btn] = val1 = val1 & (1 << buttonport[btn]);
     return !(val1 && val2);
-    
 }

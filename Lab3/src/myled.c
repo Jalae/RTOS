@@ -1,59 +1,32 @@
 
 #include "myled.h"
-
+#define LED_MAXRATE 1000
+#define LED_MINRATE 200
+#define LED_INCVAL 50
+#define LED_DEFVAL 500
 void myledblink(void *pvParameters)
 {
     xTaskParameter_t *pxTaskParameter;
     pxTaskParameter = (xTaskParameter_t *) pvParameters;
+    portTickType xToggleRate = LED_DEFVAL;
     while(1)
     {
-        vTaskDelay(pxTaskParameter->xToggleRate);
+        if(uxQueueMessagesWaiting(pxTaskParameter->queue) > 0)
+        {
+            int val;
+            xQueueRecieve(pxTaskParameter->queue, (void)&val, 0);
+            switch(val)
+            {
+                case 1:
+                        xToggleRate = (xToggleRate+LED_INCVAL > LED_MAXRATE ? LED_MAXRATE : xToggleRate+LED_INCVAL);
+                        break;
+                case 2:
+                        xToggleRate = (xToggleRate-LED_INCVAL < LED_MINRATE ? LED_MINRATE : xToggleRate-LED_INCVAL);
+                        break;
+                default:
+            }
+        }
         mPORTDToggleBits(1<<pxTaskParameter->function);
-    }
-}
-
-void taskTECHNOPARTY(void *pvParameters)
-{
-    xTaskParameter_t *pxTaskParameter;
-    portTickType xStartTime;
-
-    /* The parameter points to an xTaskParameters_t structure. */
-    pxTaskParameter = (xTaskParameter_t *) pvParameters;
-    int statepattern[4];
-    switch(pxTaskParameter->function)
-    {
-        case 1:
-            statepattern [0] = 0;
-            statepattern [1] = 1;
-            statepattern [2] = 2;
-            statepattern [3] = 4;
-            break;
-        case 2:
-            statepattern [0] = 0;
-            statepattern [1] = 4;
-            statepattern [2] = 2;
-            statepattern [3] = 1;
-            break;
-        case 3:
-            statepattern [0] = 2;
-            statepattern [1] = 4;
-            statepattern [2] = 2;
-            statepattern [3] = 1;
-            break;
-    }
-    int currentstate = 0;
-    while (1)
-    {
-        /* Note the time before entering the while loop.  xTaskGetTickCount()
-        is a FreeRTOS API function. */
-        xStartTime = xTaskGetTickCount();
-
-        while ((xTaskGetTickCount() - xStartTime) < pxTaskParameter->xToggleRate);
-        mPORTDClearBits(BIT_0 | BIT_1 | BIT_2);
-        if(statepattern[currentstate])
-        mPORTDToggleBits(statepattern[currentstate]);
-        currentstate = currentstate + 1;
-        if(currentstate>=4)
-            currentstate = 0;
+        vTaskDelay(xToggleRate);
     }
 }
