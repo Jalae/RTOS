@@ -1,16 +1,10 @@
 
 #include "systemControl.h"
 
-#define MAXTASKS 3
+char msg[3][50] = { "LED 0 IS NOW ACTIVE\r\n",
+                    "LED 1 IS NOW ACTIVE\r\n",
+                    "LED 2 IS NOW ACTIVE\r\n"};
 
-static int numTasks;
-static xTaskHandle pvTasks[MAXTASKS];
-static int started;
-static const xTaskParameter_t params[MAXTASKS] = {
-                                            {0, (400 / portTICK_RATE_MS)} ,
-                                            {1, (400 / portTICK_RATE_MS)} ,
-                                            {2, (400 / portTICK_RATE_MS)}
-                                            };
 void systemControlTask(void *pvParameters)
 {
     xTaskParameter_t *pxTaskParameter;
@@ -20,36 +14,19 @@ void systemControlTask(void *pvParameters)
     {
         if(mybtngetstatus(1))
         {
-            if(numTasks < MAXTASKS)
-            {
-                xTaskCreate(myledblink,
-                        "Blink",
-                        configMINIMAL_STACK_SIZE,
-                        (void *) &(params[numTasks]),
-                        1,
-                        &(pvTasks[numTasks] ) );
-                numTasks = numTasks + 1;
-            }
+            int up = 1;
+            vQueueSendToBack(pxTaskParameter->queue, &up, 0);
         }
         if(mybtngetstatus(2))
         {
-            if(numTasks > 0)
-            {
-                numTasks = numTasks - 1;
-                vTaskDelete(pvTasks[numTasks]);
-            }
+            int down = 2;
+            vQueueSendToBack(pxTaskParameter->queue, &down, 0);
         }
         if(mybtngetstatus(3))
         {
-            int i;
-            if(started)
-                for(i = 0; i < numTasks; i++)
-                    vTaskSuspend(pvTasks[i]);
-            else
-                for(i = 0; i < numTasks; i++)
-                    vTaskResume(pvTasks[i]);
-
-            started = !started;
+            vQueueSendToBack(pxTaskParameter->uart,msg[pxTaskParameter->function],0);
+            vTaskResume(pxTaskParameter->next);
+            vTaskSuspend(NULL);
         }
         vTaskDelay(100);
     }

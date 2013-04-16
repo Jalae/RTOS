@@ -15,7 +15,9 @@
 
 typedef struct xTASK_PARAMETER {
     uint16_t function;                   /* The number of the LED to toggle. */
-    xQueueHandle queue;               /* The rate at which the LED should be toggle. */
+    xQueueHandle queue;
+    xQueueHandle uart;
+    xTaskHandle next;
 } xTaskParameter_t;
 
 #include "systemControl.h"
