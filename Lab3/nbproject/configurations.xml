@@ -19,6 +19,8 @@
       <itemPath>include/mybtn.h</itemPath>
       <itemPath>include/myincludes.h</itemPath>
       <itemPath>include/systemControl.h</itemPath>
+      <itemPath>include/myUART.h</itemPath>
+      <itemPath>include/uartdrv.h</itemPath>
     </logicalFolder>
     <logicalFolder name="LinkerScript"
                    displayName="Linker Files"
@@ -39,6 +41,8 @@
       <itemPath>src/myled.c</itemPath>
       <itemPath>src/mybtn.c</itemPath>
       <itemPath>src/systemControl.c</itemPath>
+      <itemPath>src/myUART.c</itemPath>
+      <itemPath>src/uartdrv.c</itemPath>
     </logicalFolder>
     <logicalFolder name="ExternalFiles"
                    displayName="Important Files"

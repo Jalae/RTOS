@@ -94,7 +94,8 @@ int main(void) {
 
     xTaskParameter_t MCP1= {1, ql0, quart, NULL};
     xTaskParameter_t MCP2= {2, ql1, quart, NULL};
-    xTaskParameter_t MCP3= {3, ql2, quart, NULL};
+    xTaskParameter_t MCP3= {0, ql2, quart, NULL};
+    xTaskParameter_t pUART= {0, NULL, quart, NULL};
     xTaskParameter_t LED0= {0, ql0, NULL, NULL};
     xTaskParameter_t LED1= {1, ql1, NULL, NULL};
     xTaskParameter_t LED2= {2, ql2, NULL, NULL};
@@ -141,6 +142,12 @@ int main(void) {
             "LED 2",
             configMINIMAL_STACK_SIZE,
             (void *)&LED2,
+            1,
+            NULL);
+    xTaskCreate(UARTTask,
+            "UART",
+            configMINIMAL_STACK_SIZE,
+            (void *)&pUART,
             1,
             NULL);
 

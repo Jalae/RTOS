@@ -1,5 +1,5 @@
-#ifndef SYSTEMCONTROLDEF
-#define SYSTEMCONTROLDEF
+#ifndef MYBTNDEF
+#define MYBTNDEF
 
 #include "myincludes.h"
 

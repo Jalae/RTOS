@@ -22,4 +22,5 @@ typedef struct xTASK_PARAMETER {
 
 #include "systemControl.h"
 #include "mybtn.h"
+#include "myUART.h"
 #endif
