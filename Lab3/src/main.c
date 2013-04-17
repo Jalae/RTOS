@@ -86,14 +86,70 @@ static void prvSetupHardware(void);
 int main(void) {
     /* Perform any hardware initialisation that may be necessary. */
     prvSetupHardware();
+    //create queues
+    xQueueHandle ql0 = xQueueCreate(5, 4);
+    xQueueHandle ql1 = xQueueCreate(5, 4);
+    xQueueHandle ql2 = xQueueCreate(5, 4);
+    xQueueHandle quart = xQueueCreate(5, 50);
+
+    xTaskParameter_t MCP1= {1, ql0, quart, NULL};
+    xTaskParameter_t MCP2= {2, ql1, quart, NULL};
+    xTaskParameter_t MCP3= {3, ql2, quart, NULL};
+    xTaskParameter_t LED0= {0, ql0, NULL, NULL};
+    xTaskParameter_t LED1= {1, ql1, NULL, NULL};
+    xTaskParameter_t LED2= {2, ql2, NULL, NULL};
+
+    xTaskHandle next1;
+    xTaskHandle next2;
+    xTaskHandle next3;
+    xTaskCreate(systemControlTask,
+            "MCP 1",
+            configMINIMAL_STACK_SIZE,
+            (void*)&MCP1,
+            1,
+            &next3);
 
     xTaskCreate(systemControlTask,
-            "MCP",
+            "MCP 2",
             configMINIMAL_STACK_SIZE,
-            NULL,
+            (void*)&MCP2,
+            1,
+            &next1);
+
+    xTaskCreate(systemControlTask,
+            "MCP 3",
+            configMINIMAL_STACK_SIZE,
+            (void*)&MCP3,
+            1,
+            &next2);
+
+    xTaskCreate(myledblink,
+            "LED 0",
+            configMINIMAL_STACK_SIZE,
+            (void *)&LED0,
             1,
             NULL);
 
+    xTaskCreate(myledblink,
+            "LED 1",
+            configMINIMAL_STACK_SIZE,
+            (void *)&LED1,
+            1,
+            NULL);
+
+    xTaskCreate(myledblink,
+            "LED 2",
+            configMINIMAL_STACK_SIZE,
+            (void *)&LED2,
+            1,
+            NULL);
+
+    MCP1.next = next1;
+    MCP2.next = next2;
+    MCP3.next = next3;
+
+    vTaskSuspend(next1);
+    vTaskSuspend(next2);
     /* Start the scheduler so the tasks start executing.  This function should not return. */
     vTaskStartScheduler();
 }

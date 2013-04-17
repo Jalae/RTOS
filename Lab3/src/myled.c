@@ -14,16 +14,17 @@ void myledblink(void *pvParameters)
         if(uxQueueMessagesWaiting(pxTaskParameter->queue) > 0)
         {
             int val;
-            xQueueRecieve(pxTaskParameter->queue, (void)&val, 0);
+            xQueueReceive(pxTaskParameter->queue, &val, 0);
             switch(val)
             {
-                case 1:
+                case 2:
                         xToggleRate = (xToggleRate+LED_INCVAL > LED_MAXRATE ? LED_MAXRATE : xToggleRate+LED_INCVAL);
                         break;
-                case 2:
+                case 1:
                         xToggleRate = (xToggleRate-LED_INCVAL < LED_MINRATE ? LED_MINRATE : xToggleRate-LED_INCVAL);
                         break;
                 default:
+                        ;
             }
         }
         mPORTDToggleBits(1<<pxTaskParameter->function);
